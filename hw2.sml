@@ -106,11 +106,30 @@ fun score (cs, g) =
     let
 	val cs_sum = sum_cards(cs)
 	val is_same_color = all_same_color(cs)
-	val preliminary_g = (cs_sum - g) * 3
-	val preliminary_l = g - cs_sum
+	val preliminary_g = if cs_sum > 0 then (cs_sum - g) * 3 else cs_sum
+	val preliminary_l = if cs_sum > 0 then g - cs_sum else cs_sum
 	val dnum = 2
     in
 	case cs_sum > g of
 	    true => if is_same_color then preliminary_g div dnum else preliminary_g
 	  | _ =>  if is_same_color then preliminary_l div dnum else preliminary_l
+    end
+
+fun officiate (cl, ml, g) =
+    let
+	fun process_moves (crds, mvs, hld_crds) =
+	    case mvs of
+		[] => score(hld_crds, g)
+	      | (Discard c)::rest_mvs => process_moves(crds, rest_mvs, remove_card(hld_crds, c, IllegalMove))
+	      | Draw::rest_mvs =>
+		case crds of
+		    [] => score(hld_crds, g)
+		  | c::crds' => let val current_score = score(c::hld_crds, g)
+				in
+				    if current_score > g
+				    then current_score
+				    else process_moves(crds', rest_mvs, c::hld_crds)
+				end
+    in
+	process_moves(cl, ml, [])
     end
