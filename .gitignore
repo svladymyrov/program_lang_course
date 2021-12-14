@@ -1,2 +1,17 @@
 bin
 lib
+base
+ckit
+cml
+config
+doc
+lib
+ml-burg
+ml-lex
+ml-lpt
+MLRISC
+ml-yacc
+nlffi
+smlnj-lib
+trace-debug-profile
+*.tgz
