@@ -36,19 +36,24 @@ datatype typ = Anything
 
 (**** you can put all your code here ****)
 
-fun only_capitals ss = List.filter(fn s => Char.isUpper(String.sub(s,0))) ss
+val only_capitals = List.filter(fn s => Char.isUpper(String.sub(s,0)))
 
-fun fold (f, acc, xs) =
-    case xs of
-	[] => acc
-      | x::xs' => fold(f, f(acc, x), xs')
+val longest_string1 = foldl (fn (s, acc) => if String.size s > String.size acc then s else acc) ""
 
-fun longest_string1 ss = fold((fn (acc, s) => if String.size s > String.size acc then s else acc), "", ss)
+val longest_string2 = foldl (fn (s, acc) => if String.size acc > String.size s then acc else s) ""
 
-fun longest_string2 ss = fold((fn (acc, s) => if String.size acc > String.size s then acc else s), "", ss)
+fun longest_string_helper f = foldl (fn (s, acc) => if f (String.size s, String.size acc) then s else acc) ""
 
-(*
-fun longest_string_helper f = if f(1,2) then longest_string1 else longest_string2
-val longest_string3 = longest_string_helper(fn (n1, n2) => n1>n2)
-val longest_string4 = longest_string_helper(longest_string2)
-*)
+val longest_string3 = longest_string_helper (fn (n1,n2) => n1>n2)
+
+val longest_string4 = longest_string_helper (fn (n1,n2) => n1>=n2)
+
+val longest_capitalized = longest_string3 o only_capitals
+
+val rev_string = String.implode o List.rev o String.explode
+
+fun first_answer f = fn xs =>
+	   case xs of
+	       [] => raise NoAnswer
+	     | x::xs' => case f x of SOME b => b 
+				  | _ =>  first_answer f xs'
