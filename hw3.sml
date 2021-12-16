@@ -57,3 +57,20 @@ fun first_answer f = fn xs =>
 	       [] => raise NoAnswer
 	     | x::xs' => case f x of SOME b => b 
 				  | _ =>  first_answer f xs'
+
+fun all_answers f = fn xs =>
+		       let fun loop (ls, acc) =
+			       case ls of
+				   [] => acc
+				 | x::ls' => case f x of
+						 SOME l => loop(ls', acc @ l)
+					       | _ => []
+		       in
+			   (* TODO: make it tail recursive *)
+			   case loop(xs, []) of [] => NONE 
+					      | x::rest => SOME (x::rest)
+		       end
+
+val count_wildcards = g (fn _ => 1) (fn x => 0)
+val count_wild_and_variable_lengths = g (fn _ => 1) (fn x => String.size x)
+fun count_some_var (s, p) = g (fn _ => 0) (fn x => if x=s then 1 else 0) p

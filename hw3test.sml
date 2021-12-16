@@ -40,15 +40,27 @@ val test61 = rev_string "" = ""
 val test7 = first_answer (fn x => if x > 3 then SOME x else NONE) [1,2,3,4,5] = 4
 val test70 = (first_answer (fn x => if x > 5 then SOME x else NONE) [1,2,3,4,5] handle NoAnswer => 0) = 0
 
-(*
+
 val test8 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [2,3,4,5,6,7] = NONE
+val test80 = all_answers (fn x => if x > 1 then SOME [x] else NONE) [2,3,4,5,6,7] = SOME [2,3,4,5,6,7]
+val test81 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [] = NONE
+val test82 = all_answers (fn x => if x = 2 then SOME [x] else NONE) [2] = SOME [2]
+
 
 val test9a = count_wildcards Wildcard = 1
+val test90a = count_wildcards (TupleP [Wildcard,Wildcard]) = 2
+val test91a = count_wildcards (TupleP [Wildcard,Wildcard,Variable "q"]) = 2
+
 
 val test9b = count_wild_and_variable_lengths (Variable("a")) = 1
+val test90b = count_wild_and_variable_lengths (TupleP [Variable("a"),Wildcard,Variable("qwerty")]) = 8
+val test91b = count_wild_and_variable_lengths (ConstructorP ("C",Variable "qw")) = 2
+
 
 val test9c = count_some_var ("x", Variable("x")) = 1
+val test90c = count_some_var ("zxc", (TupleP [Variable("a"),Wildcard,Variable("qwerty")])) = 0
 
+(*
 val test10 = check_pat (Variable("x")) = true
 
 val test11 = match (Const(1), UnitP) = NONE
