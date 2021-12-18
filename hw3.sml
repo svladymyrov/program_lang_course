@@ -74,3 +74,34 @@ fun all_answers f = fn xs =>
 val count_wildcards = g (fn _ => 1) (fn x => 0)
 val count_wild_and_variable_lengths = g (fn _ => 1) (fn x => String.size x)
 fun count_some_var (s, p) = g (fn _ => 0) (fn x => if x=s then 1 else 0) p
+
+fun get_var_names p =
+    case p of
+	Variable x => [x]
+      | TupleP ps => List.foldl (fn (p,acc) => acc @ (get_var_names p)) [] ps
+      | ConstructorP(_,p) => get_var_names p
+      | _ => []
+
+fun distinct_names xs =
+    case xs of
+	[] => false
+      | x::[] => true
+      | x::xs' => if List.exists (fn s => s=x) xs' then false else distinct_names xs'
+
+val check_pat = distinct_names o get_var_names
+
+fun match vp =
+    case vp of
+	(_, Wildcard) => SOME []
+      | (v, Variable s) => SOME [(s,v)]
+      | (Unit, UnitP) => SOME []
+      | (Const n1, ConstP n2) => if n1=n2 then SOME [] else NONE
+      | (Tuple vs, TupleP ps) => all_answers match (ListPair.zip (vs,ps))
+      | (Constructor(s1,v), ConstructorP(s2,p)) => if s1=s2 then match (v,p) else NONE
+      | _ => NONE
+
+
+fun first_match v ps =
+    case ps of
+	[] => NONE
+      | _ => (SOME (first_answer (fn x => match (v,x)) ps)) handle NoAnswer => NONE

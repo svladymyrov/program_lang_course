@@ -60,11 +60,27 @@ val test91b = count_wild_and_variable_lengths (ConstructorP ("C",Variable "qw"))
 val test9c = count_some_var ("x", Variable("x")) = 1
 val test90c = count_some_var ("zxc", (TupleP [Variable("a"),Wildcard,Variable("qwerty")])) = 0
 
-(*
+
 val test10 = check_pat (Variable("x")) = true
+val test100 = check_pat (TupleP [Variable("x"),Variable("y")]) = true
+val test101 = check_pat (TupleP [Variable("x"),Variable("y"),Variable("x")]) = false
+val test102 = check_pat (TupleP [Wildcard, Wildcard]) = false
+
 
 val test11 = match (Const(1), UnitP) = NONE
+val test110 = match (Const(1), Wildcard) = SOME []
+val test111 = match (Const(1), Variable("q")) = SOME [("q",Const(1))]
+val test112 = match (Unit, UnitP) = SOME []
+val test113 = match (Const(1), ConstP(1)) = SOME []
+val test114 = match (Const(1), ConstP(12)) = NONE
+val test115 = match (Tuple([Unit]), TupleP([ConstP(1)])) = NONE
+val test116 = match (Tuple([Unit]), TupleP([UnitP, UnitP])) = NONE
+val test117 = match (Tuple([Unit,Const(1)]), TupleP([Variable("q"),ConstP(1)])) = SOME [("q", Unit)]
+val test118 = match (Constructor("z", Const(1)), ConstructorP("z", ConstP(1))) = SOME []
+val test119 = match (Constructor("z", Const(1)), ConstructorP("z", UnitP)) = NONE
+
 
 val test12 = first_match Unit [UnitP] = SOME []
+val test120 = first_match (Const(1)) [UnitP, ConstP(2), Variable("n")] = SOME [("n",Const(1))]
+val test121 = first_match (Constructor("x", Unit)) [ConstructorP("x", ConstP(3)), UnitP] = NONE
 
-*)
