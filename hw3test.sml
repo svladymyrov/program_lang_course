@@ -43,7 +43,7 @@ val test70 = (first_answer (fn x => if x > 5 then SOME x else NONE) [1,2,3,4,5] 
 
 val test8 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [2,3,4,5,6,7] = NONE
 val test80 = all_answers (fn x => if x > 1 then SOME [x] else NONE) [2,3,4,5,6,7] = SOME [2,3,4,5,6,7]
-val test81 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [] = NONE
+val test81 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [] = SOME []
 val test82 = all_answers (fn x => if x = 2 then SOME [x] else NONE) [2] = SOME [2]
 
 

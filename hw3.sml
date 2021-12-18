@@ -63,12 +63,10 @@ fun all_answers f = fn xs =>
 			       case ls of
 				   [] => acc
 				 | x::ls' => case f x of
-						 SOME l => loop(ls', acc @ l)
-					       | _ => []
+						 SOME l => loop(ls', SOME ((valOf acc) @ l))
+					       | _ => NONE
 		       in
-			   (* TODO: make it tail recursive *)
-			   case loop(xs, []) of [] => NONE 
-					      | x::rest => SOME (x::rest)
+			   loop(xs, SOME [])
 		       end
 
 val count_wildcards = g (fn _ => 1) (fn x => 0)
@@ -96,7 +94,9 @@ fun match vp =
       | (v, Variable s) => SOME [(s,v)]
       | (Unit, UnitP) => SOME []
       | (Const n1, ConstP n2) => if n1=n2 then SOME [] else NONE
-      | (Tuple vs, TupleP ps) => all_answers match (ListPair.zip (vs,ps))
+      | (Tuple vs, TupleP ps) => if (List.length vs)=(List.length ps)
+				 then all_answers match (ListPair.zip (vs,ps))
+				 else NONE
       | (Constructor(s1,v), ConstructorP(s2,p)) => if s1=s2 then match (v,p) else NONE
       | _ => NONE
 
